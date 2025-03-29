@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabajos Prácticos - Programación Móvil Técnica N4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: #0f0e17;
+            color: #e0e0ff;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        .contenedor {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .encabezado {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0e17 100%);
+            color: white;
+            padding: 100px 0 140px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: -60px;
+            border-bottom: 1px solid rgba(127, 90, 240, 0.2);
+        }
+        
+        .encabezado::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 75% 30%, rgba(127, 90, 240, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .logo-placeholder {
+            width: 180px;
+            height: 80px;
+            margin: 0 auto 30px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #7f5af0 0%, #b388ff 100%);
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(127, 90, 240, 0.3);
+        }
+        
+        .encabezado h1 {
+            font-size: 2.8rem;
+            margin-bottom: 16px;
+            line-height: 1.2;
+            color: #7f5af0;
+        }
+        
+        .encabezado p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #a7a9be;
+            font-weight: 400;
+        }
+        
+        .principal {
+            padding: 40px 0 80px;
+        }
+        
+        .seccion-moviles {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 40px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(127, 90, 240, 0.1);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        
+        .titulo-seccion {
+            padding: 24px 32px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(127, 90, 240, 0.2) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(127, 90, 240, 0.1);
+        }
+        
+        .titulo-seccion i {
+            margin-right: 16px;
+            color: #7f5af0;
+            font-size: 1.5rem;
+        }
+        
+        .contenido-seccion {
+            padding: 32px;
+        }
+        
+        .lista-trabajos {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .item-trabajo {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+            border: 1px solid rgba(127, 90, 240, 0.1);
+            width: calc(50% - 10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .item-trabajo::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #7f5af0, #b388ff);
+            transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        
+        .item-trabajo:hover {
+            transform: translateY(-4px);
+            border-color: rgba(127, 90, 240, 0.3);
+            box-shadow: 0 8px 24px rgba(127, 90, 240, 0.1);
+        }
+        
+        .item-trabajo:hover::before {
+            width: 6px;
+        }
+        
+        .item-trabajo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #e0e0ff;
+            height: 100%;
+        }
+        
+        .icono-trabajo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #7f5af0 0%, #b388ff 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .info-trabajo h3 {
+            font-size: 1.125rem;
+            margin-bottom: 4px;
+            color: #e0e0ff;
+        }
+        
+        .info-trabajo p {
+            font-size: 0.875rem;
+            color: #a7a9be;
+            font-weight: 400;
+        }
+        
+        .pie-pagina {
+            background: #1a1a2e;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            border-top: 1px solid rgba(127, 90, 240, 0.1);
+        }
+        
+        .contenido-pie {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .tarjeta-alumno {
+            display: flex;
+            align-items: center;
+            background: rgba(76, 201, 240, 0.1);
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(127, 90, 240, 0.1);
+            transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        
+        .tarjeta-alumno:hover {
+            border-color: rgba(127, 90, 240, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .foto-placeholder {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-right: 20px;
+            background: linear-gradient(135deg, #7f5af0 0%, #b388ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .info-alumno h3 {
+            font-size: 1.125rem;
+            margin-bottom: 4px;
+            color: #e0e0ff;
+            text-align: left;
+        }
+        
+        .info-alumno p {
+            font-size: 0.875rem;
+            color: #a7a9be;
+            text-align: left;
+        }
+        
+        .enlaces-pie {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .enlaces-pie a {
+            color: #a7a9be;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .enlaces-pie a:hover {
+            color: #b388ff;
+        }
+        
+        .enlaces-pie a i {
+            font-size: 1rem;
+        }
+        
+        .derechos {
+            font-size: 0.8125rem;
+            color: #a7a9be;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .encabezado {
+                padding: 80px 0 100px;
+            }
+            
+            .encabezado h1 {
+                font-size: 2rem;
+            }
+            
+            .encabezado p {
+                font-size: 1rem;
+            }
+            
+            .item-trabajo {
+                width: 100%;
+            }
+            
+            .tarjeta-alumno {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .foto-placeholder {
+                margin-right: 0;
+                margin-bottom: 16px;
+            }
+            
+            .info-alumno h3,
+            .info-alumno p {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="encabezado">
+        <div class="contenedor">
+            <div class="logo-placeholder">TÉCNICA 4</div>
+            <h1>Trabajos Prácticos - Plataformas Móviles</h1>
+            <p>Escuela Técnica N°4 - Proyecto de Desarrollo de Software para Plataformas Móviles</p>
+        </div>
+    </header>
+    
+    <main class="principal">
+        <div class="contenedor">
+            <section class="seccion-moviles">
+                <div class="titulo-seccion">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Plataformas Móviles</span>
+                </div>
+                <div class="contenido-seccion">
+                    <ul class="lista-trabajos">
+                        <li class="item-trabajo">
+                            <a href="../plataformas-moviles-entregas/tp-1/index.html">
+                                <div class="icono-trabajo">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="info-trabajo">
+                                    <h3>Trabajo Práctico 1</h3>
+                                    <p>HTML</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="item-trabajo">
+                            <a href="../plataformas-moviles-entregas/tp-2/index.html">
+                                <div class="icono-trabajo">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="info-trabajo">
+                                    <h3>Trabajo Práctico 2</h3>
+                                    <p>Selectores CSS</p>
+                                </div>
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer class="pie-pagina">
+        <div class="contenedor">
+            <div class="contenido-pie">
+                <div class="tarjeta-alumno">
+                    <div class="foto-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="info-alumno">
+                        <h3>Luca Cordoba</h3>
+                        <p>Estudiante de Programación - TECNICA N°4</p>
+                    </div>
+                </div>
+                <div class="enlaces-pie">
+                    <a href="https://github.com/lucacordoba" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="mailto:lucacordoba1612@gmail.com?subject=Contacto desde Portfolio"><i class="fas fa-envelope"></i> Contacto</a>
+                </div>
+                <p class="derechos">© 2025 Escuela Técnica N°4 - Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
