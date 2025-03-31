@@ -1,4 +1,4 @@
-/* A continuacion agregue comentarios a los selectores avanzados que son nuevos para mi */
+/* Agregue comentarios a los selectores avanzados que son nuevos para mi */
 body {
   background-color: #222;
   color: rgb(255, 0, 98);
@@ -52,12 +52,10 @@ p:first-of-type::first-line {
   color: #efe;
 }
 
-/* Cambia el color del título principal cuando se pasa el puntero */
 h1:hover {
   color: rgb(255, 0, 0);
 }
 
-/* Cambia el color de los links visitados a gris */
 a:visited {
   color: gray;
 }
@@ -67,7 +65,7 @@ a:not([href]) {
   font-style: italic;
 }
 
-/* Alterna los colores en las listas de películas para los elementos impares*/
+/* Cambia los colores en elementos impares*/
 .movies-list li:nth-child(odd) {
   background-color: #2b2a2a;
 }
