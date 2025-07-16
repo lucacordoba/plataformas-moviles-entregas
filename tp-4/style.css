@@ -42,7 +42,7 @@
     }
 }
 
-@media (min-width: 800px) and (max-width: 899px) {
+@media (min-width: 800px) and (max-width: 900px) {
     img {
         display: none;
     }
