@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TP-16 - (PokeAPI)</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background: #f8f9fa;
+      }
+      .card-pokemon {
+        transition: transform 0.12s ease;
+      }
+      .card-pokemon:hover {
+        transform: translateY(-6px);
+      }
+      .poke-img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+      }
+      .tipo-badge {
+        margin-right: 6px;
+        text-transform: capitalize;
+      }
+      #spinner-global {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1050;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container my-4">
+      <h1 class="mb-3">PokéDex - primeros pokémon (PokeAPI)</h1>
+
+      <div
+        class="mb-3 d-flex justify-content-between align-items-center gap-2 flex-column flex-md-row"
+      >
+        <div>
+          <input
+            id="filtro-nombre"
+            class="form-control"
+            placeholder="Buscar por nombre (filtra la grilla)"
+          />
+        </div>
+        <div class="text-end">
+          <button id="btn-reset" class="btn btn-outline-secondary me-2">
+            Reset filtro
+          </button>
+          <button id="btn-cargar-mas" class="btn btn-primary">
+            Cargar más
+          </button>
+        </div>
+      </div>
+
+      <div id="grilla" class="row g-3"></div>
+
+      <div class="text-center mt-4">
+        <button
+          id="btn-cargar-mas-bottom"
+          class="btn btn-lg btn-outline-primary"
+        >
+          Cargar más pokémon
+        </button>
+      </div>
+    </div>
+
+    <div id="spinner-global">
+      <div
+        class="spinner-border text-primary"
+        role="status"
+        style="width: 4rem; height: 4rem"
+      >
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalInfo" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="modal-title" class="modal-title">Pokémon</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex gap-3 flex-column flex-md-row">
+              <img
+                id="modal-img"
+                src=""
+                alt=""
+                style="width: 220px; height: 220px; object-fit: contain"
+              />
+              <div>
+                <p><strong>Tipos:</strong> <span id="modal-tipos"></span></p>
+                <p>
+                  <strong>Habilidades:</strong>
+                  <span id="modal-habilidades"></span>
+                </p>
+                <p><strong>Movimientos (hasta 4):</strong></p>
+                <ul id="modal-moves"></ul>
+                <p>
+                  <strong>Altura:</strong> <span id="modal-height"></span> |
+                  <strong>Peso:</strong> <span id="modal-weight"></span>
+                </p>
+                <p id="modal-id" class="text-muted small"></p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const LIMITE_POR_PET = 151; 
+      let offset = 0;
+      const TOTAL_POR_VEZ = LIMITE_POR_PET; 
+      const API_BASE = "https://pokeapi.co/api/v2";
+      const grilla = document.getElementById("grilla");
+      const spinner = document.getElementById("spinner-global");
+      const btnCargarMasTop = document.getElementById("btn-cargar-mas");
+      const btnCargarMasBottom = document.getElementById(
+        "btn-cargar-mas-bottom"
+      );
+      const filtroNombre = document.getElementById("filtro-nombre");
+      const btnReset = document.getElementById("btn-reset");
+
+      // Mostrar / ocultar spinner
+      function showSpinner(show = true) {
+        spinner.style.display = show ? "block" : "none";
+      }
+
+      async function fetchLista(limit, offsetParam) {
+        const url = `${API_BASE}/pokemon?limit=${limit}&offset=${offsetParam}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Error al obtener lista");
+        return res.json(); 
+      }
+
+      async function fetchDetalle(url) {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Error al obtener detalle");
+        return res.json();
+      }
+
+      function crearCartaPokemon(datos) {
+        const col = document.createElement("div");
+        col.className = "col-6 col-sm-4 col-md-3 col-lg-2";
+
+        const card = document.createElement("div");
+        card.className = "card card-pokemon h-100";
+
+        const nombre = datos.name[0].toUpperCase() + datos.name.slice(1);
+        const header = document.createElement("div");
+        header.className = "card-header text-center small text-muted";
+        header.textContent = `#${datos.id}`;
+
+        const body = document.createElement("div");
+        body.className =
+          "card-body d-flex flex-column align-items-center text-center";
+
+        const img = document.createElement("img");
+        img.className = "poke-img mb-2";
+        const imgUrl =
+          datos.sprites?.other?.["official-artwork"]?.front_default ||
+          datos.sprites?.front_default ||
+          "";
+        img.src = imgUrl;
+        img.alt = nombre;
+
+        const titulo = document.createElement("h6");
+        titulo.className = "card-title mb-1 text-capitalize";
+        titulo.textContent = nombre;
+
+        const tiposWrap = document.createElement("div");
+        datos.types.forEach((tObj) => {
+          const span = document.createElement("span");
+          span.className = "badge bg-secondary tipo-badge text-white";
+          span.textContent = tObj.type.name;
+          tiposWrap.appendChild(span);
+        });
+
+        const acciones = document.createElement("div");
+        acciones.className = "mt-auto w-100 d-flex gap-2";
+
+        const btnInfo = document.createElement("button");
+        btnInfo.className = "btn btn-sm btn-outline-primary flex-grow-1";
+        btnInfo.textContent = "Más info";
+        btnInfo.addEventListener("click", () => abrirModal(datos));
+
+        acciones.appendChild(btnInfo);
+
+        body.appendChild(img);
+        body.appendChild(titulo);
+        body.appendChild(tiposWrap);
+        body.appendChild(acciones);
+
+        card.appendChild(header);
+        card.appendChild(body);
+        col.appendChild(card);
+
+        return col;
+      }
+
+      function abrirModal(datos) {
+        const modalTitle = document.getElementById("modal-title");
+        const modalImg = document.getElementById("modal-img");
+        const modalTipos = document.getElementById("modal-tipos");
+        const modalHabs = document.getElementById("modal-habilidades");
+        const modalMoves = document.getElementById("modal-moves");
+        const modalHeight = document.getElementById("modal-height");
+        const modalWeight = document.getElementById("modal-weight");
+        const modalId = document.getElementById("modal-id");
+
+        modalTitle.textContent =
+          datos.name[0].toUpperCase() + datos.name.slice(1);
+        modalImg.src =
+          datos.sprites?.other?.["official-artwork"]?.front_default ||
+          datos.sprites?.front_default ||
+          "";
+        modalTipos.innerHTML = datos.types
+          .map(
+            (t) =>
+              `<span class="badge bg-info text-dark tipo-badge">${t.type.name}</span>`
+          )
+          .join(" ");
+        modalHabs.textContent = datos.abilities
+          .map((a) => a.ability.name)
+          .join(", ");
+        modalMoves.innerHTML = "";
+        const moves = datos.moves.slice(0, 4);
+        moves.forEach((m) => {
+          const li = document.createElement("li");
+          li.textContent = m.move.name;
+          modalMoves.appendChild(li);
+        });
+        modalHeight.textContent = datos.height;
+        modalWeight.textContent = datos.weight;
+        modalId.textContent = `ID API: ${datos.id}`;
+
+        const bsModal = new bootstrap.Modal(
+          document.getElementById("modalInfo")
+        );
+        bsModal.show();
+      }
+
+      async function cargarLote(limit, offsetParam) {
+        try {
+          showSpinner(true);
+          btnCargarMasTop.disabled = true;
+          btnCargarMasBottom.disabled = true;
+
+          const lista = await fetchLista(limit, offsetParam);
+          const promesas = lista.results.map((r) =>
+            fetchDetalle(r.url).catch((err) => null)
+          );
+          const detalles = await Promise.all(promesas);
+
+          detalles.forEach((det) => {
+            if (det) {
+              const carta = crearCartaPokemon(det);
+              grilla.appendChild(carta);
+            }
+          });
+
+          offset += limit;
+        } catch (err) {
+          console.error(err);
+          alert("Error al cargar pokémon. Reintente.");
+        } finally {
+          showSpinner(false);
+          btnCargarMasTop.disabled = false;
+          btnCargarMasBottom.disabled = false;
+        }
+      }
+
+      function aplicarFiltro() {
+        const q = filtroNombre.value.trim().toLowerCase();
+        Array.from(grilla.children).forEach((col) => {
+          const nombre =
+            col.querySelector(".card-title")?.textContent?.toLowerCase() || "";
+          if (!q || nombre.includes(q)) {
+            col.style.display = "";
+          } else {
+            col.style.display = "none";
+          }
+        });
+      }
+
+      async function init() {
+        await cargarLote(TOTAL_POR_VEZ, offset);
+      }
+
+      btnCargarMasTop.addEventListener("click", () =>
+        cargarLote(TOTAL_POR_VEZ, offset)
+      );
+      btnCargarMasBottom.addEventListener("click", () =>
+        cargarLote(TOTAL_POR_VEZ, offset)
+      );
+      filtroNombre.addEventListener("input", aplicarFiltro);
+      btnReset.addEventListener("click", () => {
+        filtroNombre.value = "";
+        aplicarFiltro();
+      });
+
+      init();
+    </script>
+  </body>
+</html>
